@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36429.23 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gip_lab2", "gip_lab2\gip_lab2.csproj", "{F0E9E102-6B9F-44C5-B01B-3F16A0202FFC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F0E9E102-6B9F-44C5-B01B-3F16A0202FFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0E9E102-6B9F-44C5-B01B-3F16A0202FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0E9E102-6B9F-44C5-B01B-3F16A0202FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0E9E102-6B9F-44C5-B01B-3F16A0202FFC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CDD99EB9-F840-4D22-A459-D76913713860}
+	EndGlobalSection
+EndGlobal
