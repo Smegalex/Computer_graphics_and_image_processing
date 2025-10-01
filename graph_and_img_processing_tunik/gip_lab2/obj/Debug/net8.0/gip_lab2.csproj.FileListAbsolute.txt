@@ -28,3 +28,4 @@ D:\Smegal\Documents\Universities\KPI\Computer_graphics_and_image_processing\grap
 D:\Smegal\Documents\Universities\KPI\Computer_graphics_and_image_processing\graph_and_img_processing_tunik\gip_lab2\obj\Debug\net8.0\gip_lab2.pdb
 D:\Smegal\Documents\Universities\KPI\Computer_graphics_and_image_processing\graph_and_img_processing_tunik\gip_lab2\obj\Debug\net8.0\gip_lab2.genruntimeconfig.cache
 D:\Smegal\Documents\Universities\KPI\Computer_graphics_and_image_processing\graph_and_img_processing_tunik\gip_lab2\obj\Debug\net8.0\ref\gip_lab2.dll
+D:\Smegal\Documents\Universities\KPI\Computer_graphics_and_image_processing\graph_and_img_processing_tunik\gip_lab2\obj\Debug\net8.0\gip_lab2.sourcelink.json

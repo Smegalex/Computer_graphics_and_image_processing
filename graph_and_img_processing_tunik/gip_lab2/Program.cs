@@ -187,13 +187,13 @@ class MyWindow : GameWindow
         GL.End();
     }
 
-    public static void Draw3DPrism(int n = 16, float h = 1.0f, float r = 0.5f) // n - кількість граней, h - висота, r - радіус описаного навколо основи кола
+    public static void Draw3DPrism(int n = 10, float h = 1.0f, float r = 0.5f) // n - кількість граней, h - висота, r - радіус описаного навколо основи кола
     {
         float deltaFi = 2.0f * MathF.PI / n;
         float fi = 0.0f;
 
         // Бічні грані
-        GL.Color3(0.0f, 1.0f, 0.0f); // зелений
+        GL.Color3(0.0f, 0.0f, 1.0f); // зелений
         GL.Begin(PrimitiveType.Quads);
         for (int i = 0; i < n; i++)
         {

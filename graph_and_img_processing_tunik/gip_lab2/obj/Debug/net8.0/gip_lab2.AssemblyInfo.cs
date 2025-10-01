@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("gip_lab2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5503594ab85b35ea1dfb8137475a43ab2ebc829f")]
 [assembly: System.Reflection.AssemblyProductAttribute("gip_lab2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("gip_lab2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
