@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36429.23 d17.14
+VisualStudioVersion = 17.14.36429.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gip_lab2", "gip_lab2\gip_lab2.csproj", "{F0E9E102-6B9F-44C5-B01B-3F16A0202FFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gip_lab3", "gip_lab3\gip_lab3.csproj", "{8D5EFE79-519E-49B6-BFE3-4AABDE54CCCB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F0E9E102-6B9F-44C5-B01B-3F16A0202FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0E9E102-6B9F-44C5-B01B-3F16A0202FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0E9E102-6B9F-44C5-B01B-3F16A0202FFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D5EFE79-519E-49B6-BFE3-4AABDE54CCCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D5EFE79-519E-49B6-BFE3-4AABDE54CCCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D5EFE79-519E-49B6-BFE3-4AABDE54CCCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D5EFE79-519E-49B6-BFE3-4AABDE54CCCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
