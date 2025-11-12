@@ -93,7 +93,7 @@ class MyWindow : GameWindow
         SwapBuffers();
 
         // зміна кута для обертання сцени
-        Angle += 30f * (float)args.Time; // 30 градусів/секунду
+        Angle += 50f * (float)args.Time; // 30 градусів/секунду
         if (Angle >= 360.0f) Angle = 0.0f;
     }
 
@@ -123,6 +123,14 @@ class MyWindow : GameWindow
             GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
         }
 
+        //DrawColorful3DCube();
+        //DrawGradient3DCube();
+        //DrawDynamic3DCube();
+        //Draw3DCylinder();
+        //DrawDynamic3DCylinder();
+        //Draw3DDoublePyramid();
+        //Draw3DTruncatedCone();
+        //DrawDynamic3DCylinder();
         DrawTransforming3DCylindricalSurface();
 
         // Повернути в нормальний режим, щоб не зламати інший рендеринг

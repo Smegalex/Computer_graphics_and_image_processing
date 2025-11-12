@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gip_lab2", "gip_lab2\gip_la
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gip_lab3", "gip_lab3\gip_lab3.csproj", "{8D5EFE79-519E-49B6-BFE3-4AABDE54CCCB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gip_lab4", "gip_lab4\gip_lab4.csproj", "{7F4EDAD4-C9A2-42F8-A01E-395230C62E4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{8D5EFE79-519E-49B6-BFE3-4AABDE54CCCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D5EFE79-519E-49B6-BFE3-4AABDE54CCCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D5EFE79-519E-49B6-BFE3-4AABDE54CCCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F4EDAD4-C9A2-42F8-A01E-395230C62E4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F4EDAD4-C9A2-42F8-A01E-395230C62E4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F4EDAD4-C9A2-42F8-A01E-395230C62E4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F4EDAD4-C9A2-42F8-A01E-395230C62E4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
