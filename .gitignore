@@ -133,3 +133,8 @@ $RECYCLE.BIN/
 .DS_Store
 
 _NCrunch*
+
+*.exr
+*.tif
+*.blend
+*.png 
