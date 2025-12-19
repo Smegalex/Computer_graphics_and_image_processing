@@ -38,7 +38,7 @@ class Game : GameWindow
     private int _cubeTexture = 0;
     private int _cubeTexture2 = 0; // second texture for scene 2
     private int _cubeTexture3 = 0; // procedural texture for scene 3
-    private float _texture2scale = 4f;
+    private float _texture2scale = 2f;
 
     // which scene to render (1 = original, 2 = scaled/new texture, 3 = procedural)
     private int _scene = 1;

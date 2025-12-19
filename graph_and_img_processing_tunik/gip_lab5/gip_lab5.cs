@@ -38,7 +38,6 @@ class Game : GameWindow
     private bool _cubePanoramic = false; // track current cube UV layout
     private int _cubeTexture = 0;
     private int _cubeTexture2 = 0; // second texture for scene 2 / panoramic texture
-    private int _cubeTexture3 = 0; // procedural texture for scene 3 (kept for other uses)
     private int _atlasTexture = 0; // atlas texture for scene 4
     private int _transparentTexture = 0; // Task4 transparent RGBA texture
     private float _texture2scale = 1f;
@@ -51,6 +50,8 @@ class Game : GameWindow
     // encapsulated prism and overlay meshes (moved to gip_common)
     private PrismMesh? _prism;
     private OverlayQuads? _overlayQuads;
+
+    private float _prismPanoramaSpeed = 0.5f;
 
     public Game(GameWindowSettings gwSettings, NativeWindowSettings nwSettings)
         : base(gwSettings, nwSettings)
@@ -175,7 +176,7 @@ class Game : GameWindow
         {
             // For scene 3 we want the panoramic texture to be offset differently (reverse direction)
             double t = DateTime.Now.TimeOfDay.TotalSeconds;
-            offset = (float)((-t * 0.06) % 1.0);
+            offset = (float)((-t * _prismPanoramaSpeed) % 1.0);
         }
 
         float texScale = (_scene == 1) ? 1.0f : (_scene == 2 ? _texture2scale : 1.0f);

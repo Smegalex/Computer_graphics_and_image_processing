@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Drawing;
 
 class gip_lab2
@@ -11,16 +12,16 @@ class gip_lab2
     {
         var gameWindowSettings = GameWindowSettings.Default;
         var nativeWindowSettings = new NativeWindowSettings();
-        nativeWindowSettings.Title = "gip_lab6";
+        nativeWindowSettings.Title = "gip_lab7";
         nativeWindowSettings.ClientSize = new OpenTK.Mathematics.Vector2i(800, 600);
 
         // Для сумісності з legacy OpenGL:
         nativeWindowSettings.Profile = ContextProfile.Compatability;
 
-            using (var window = new MyWindow(gameWindowSettings, nativeWindowSettings))
-            {
-                window.Run();
-            }
+        using (var window = new MyWindow(gameWindowSettings, nativeWindowSettings))
+        {
+            window.Run();
+        }
     }
 }
 
@@ -31,6 +32,11 @@ class MyWindow : GameWindow
     // rotation speed in degrees per second
     private float RotationSpeed = 30.0f;
     private TeapotRenderer teapotRenderer = new TeapotRenderer();
+
+    // Toggle for three-point perspective (old orthographic-based)
+    private bool useThreePoint = false;
+    // Toggle for three-point perspective matrix (perspective built from view volume parameters)
+    private bool useThreePointMatrix = false;
 
     public MyWindow(GameWindowSettings gws, NativeWindowSettings nws)
         : base(gws, nws) { }
@@ -45,6 +51,14 @@ class MyWindow : GameWindow
         GL.Enable(EnableCap.Lighting);   // вмикаємо освітлення
         GL.Enable(EnableCap.Light0);     // джерело світла 0
 
+        // Set material specular color and shininess for front faces (Phong)
+        float[] white = { 1.0f, 1.0f, 1.0f, 1.0f };
+        GL.Material(MaterialFace.Front, MaterialParameter.Shininess, 5.0f);
+        GL.Material(MaterialFace.Front, MaterialParameter.Specular, white);
+
+        // Set light specular color
+        GL.Light(LightName.Light0, LightParameter.Specular, white);
+
         GL.Enable(EnableCap.DepthTest);  // Z-буфер
         GL.Enable(EnableCap.ColorMaterial); // режим відтворення кольорів
         // Enable scissor test using the OpenTK enum
@@ -56,7 +70,7 @@ class MyWindow : GameWindow
         GL.Enable(EnableCap.ColorMaterial);
 
         // Add a small global ambient component so the entire scene is softly lit
-        float[] sceneAmbient = { 0.15f, 0.15f, 0.15f, 1.0f };
+        float[] sceneAmbient = { 0.25f, 0.25f, 0.25f, 1.0f };
         GL.LightModel(LightModelParameter.LightModelAmbient, sceneAmbient);
 
         GL.ClearColor(0.1f, 0.0f, 0.2f, 1.0f); // фон
@@ -73,9 +87,68 @@ class MyWindow : GameWindow
         GL.MatrixMode(MatrixMode.Projection); // встановлюємо видову матрицю (проектування)
         GL.LoadIdentity(); // завантажумо одиничну матрицю
 
-        // задаємо об’єм видимості паралельної проекції
+        // Compute view volume parameters (same as previous Ortho)
         float aspect = (float)Size.X / Size.Y;
-        GL.Ortho(-w * aspect, w * aspect, -w, w, 1.0, 10.0);
+        float left = -w * aspect;
+        float right = w * aspect;
+        float bottom = -w;
+        float top = w;
+        float near = 1.0f;
+        float far = 10.0f;
+
+        // Задаємо матрицю для триточкової перспективи як 16-елементний вектор (column-major для OpenGL)
+        // Елементи розміщені тут у вигляді float[16] згідно з проханням
+        // Ця матриця додає невелику перспективну компоненту у вигляді останнього рядка, що приводить до точки сходження
+        float[] matrix = new float[16]
+        {
+            1f, 0f, 0f, 0f,
+            0f, 1f, 0f, 0f,
+            0f, 0f, 1f, 0f,
+            -0.25f, -0.25f, -0.0015f, 1f
+        };
+
+        // If useThreePointMatrix is enabled, build a perspective three-point projection matrix
+        // from the view volume parameters without using GL.Ortho. Construct final matrix as
+        // M_final = M_perspective * M_stretch * M_shift
+        if (useThreePointMatrix)
+        {
+            // Build perspective (off-center) matrix for given frustum
+            Matrix4 persp = Matrix4.CreatePerspectiveOffCenter(left, right, bottom, top, near, far);
+
+            // Build stretch (scale) matrix to normalize extents (example: scale x and y to [-1,1], z to [0,1])
+            Matrix4 stretch = Matrix4.CreateScale(2.0f / (right - left), 2.0f / (top - bottom), 2.0f / (far - near));
+
+            // Build shift (translation) matrix to move center to origin before stretching
+            Matrix4 shift = Matrix4.CreateTranslation(-(left + right) / 2.0f, -(top + bottom) / 2.0f, -near/2.0f);
+
+            // Final matrix: perspective * stretch * shift
+            Matrix4 final = persp * stretch * shift;
+
+            // Load this as the projection matrix (replaces glOrtho usage)
+            GL.LoadMatrix(ref final);
+
+            // Done
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+            return;
+        }
+
+        if (useThreePoint)
+        {
+            // Matrix4 expects row-major constructor arguments; build a Matrix4 that corresponds to the above column-major float[]
+            Matrix4 m = new Matrix4(
+                matrix[0], matrix[1], matrix[2], matrix[3],
+                matrix[4], matrix[5], matrix[6], matrix[7],
+                matrix[8], matrix[9], matrix[10], matrix[11],
+                matrix[12], matrix[13], matrix[14], matrix[15]
+            );
+
+            // Multiply current projection (identity) by our custom matrix
+            GL.MultMatrix(ref m);
+        }
+
+        // задаємо об’єм видимості паралельної проекції
+        GL.Ortho(left, right, bottom, top, near, far);
 
         GL.MatrixMode(MatrixMode.Modelview); // встановлюємо модельну матрицю
         GL.LoadIdentity(); // завантажуємо одиничну матрицю
@@ -90,6 +163,74 @@ class MyWindow : GameWindow
         int H = Size.Y;
         if (W <= 0 || H <= 0)
         {
+            SwapBuffers();
+            return;
+        }
+
+        // If three-point perspective toggle is ON, render only the perspective view fullscreen
+        if (useThreePoint)
+        {
+            GL.Viewport(0, 0, W, H);
+            GL.Scissor(0, 0, W, H);
+            GL.ClearColor(0.9f, 0.8f, 0.8f, 1.0f);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            // Use perspective projection as in bottom-right viewport
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.PushMatrix();
+            GL.LoadIdentity();
+
+            float fovRadians = MathHelper.DegreesToRadians(60.0f);
+            float aspect = H > 0 ? (float)W / H : 1.0f;
+            Matrix4 perspective = Matrix4.CreatePerspectiveFieldOfView(fovRadians, aspect, 1.0f, 10.0f);
+            GL.LoadMatrix(ref perspective);
+
+            GL.MatrixMode(MatrixMode.Modelview);
+
+            Matrix4 lookat = Matrix4.LookAt(new Vector3(2f, 2f, 2f), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+            GL.LoadMatrix(ref lookat);
+
+            float scale = 1f;
+            GL.Scale(scale, scale, scale);
+
+            // Draw scene; pass mode normally so Draw3D will extend edges because useThreePoint is true
+            Draw3D();
+
+            // Restore projection
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.PopMatrix();
+            GL.MatrixMode(MatrixMode.Modelview);
+
+            // Update angle
+            Angle += RotationSpeed * (float)args.Time;
+            if (Angle >= 360.0f) Angle = 0.0f;
+
+            SwapBuffers();
+            return;
+        }
+
+        // If useThreePointMatrix (matrix-based perspective) is enabled, render full-screen perspective using projection built in OnResize
+        if (useThreePointMatrix)
+        {
+            GL.Viewport(0, 0, W, H);
+            GL.Scissor(0, 0, W, H);
+            GL.ClearColor(0.9f, 0.8f, 0.8f, 1.0f);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            // Projection already set in OnResize (GL.LoadMatrix). Now set modelview and draw
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+
+            // Place camera in modelview (moved closer for better visibility)
+            // Previously: (2f,2f,2f) - now closer and slightly offset if needed
+            Matrix4 lookat = Matrix4.LookAt(new Vector3(1.5f, 1.5f, 1.5f), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+            GL.LoadMatrix(ref lookat);
+
+            Draw3D();
+
+            Angle += RotationSpeed * (float)args.Time;
+            if (Angle >= 360.0f) Angle = 0.0f;
+
             SwapBuffers();
             return;
         }
@@ -207,6 +348,29 @@ class MyWindow : GameWindow
         // у Delphi треба було wglDeleteContext — тут OpenTK сам все робить
     }
 
+    protected override void OnKeyDown(KeyboardKeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+        // Toggle three-point perspective with 'P'
+        if (e.Key == Keys.P)
+        {
+            useThreePoint = !useThreePoint;
+            Console.WriteLine($"Three-point perspective (orthographic-based): {(useThreePoint ? "ON" : "OFF")} - press 'P' to toggle");
+            // Force a resize to reapply projection matrix immediately
+            OnResize(new ResizeEventArgs(Size.X, Size.Y));
+        }
+
+        // Toggle matrix-based three-point perspective with 'M'
+        if (e.Key == Keys.M)
+        {
+            useThreePointMatrix = !useThreePointMatrix;
+            Console.WriteLine($"Three-point perspective (matrix-based): {(useThreePointMatrix ? "ON" : "OFF")} - press 'M' to toggle");
+            // Ensure the other mode is off to avoid conflicts
+            if (useThreePointMatrix) useThreePoint = false;
+            OnResize(new ResizeEventArgs(Size.X, Size.Y));
+        }
+    }
+
     private void Draw3D(string mode = "")
     {
         // Draw coordinate axes first
@@ -217,9 +381,8 @@ class MyWindow : GameWindow
         // поворот сцени навколо осі Y за кутом Angle
         if (mode != "noRotate")
         {
-        GL.Rotate(Angle, 0.0f, 1.0f, 0.0f);
+            GL.Rotate(Angle, 0.0f, 1.0f, 0.0f);
         }
-
 
         // Configure light components for higher contrast: low ambient, stronger diffuse, bright specular
         float[] ambient = { 0.06f, 0.06f, 0.06f, 1.0f };
@@ -258,12 +421,8 @@ class MyWindow : GameWindow
             GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
         }
 
-        //Draw3DCube();
-        // Move entire object (axes + teapot) down so it's centered in view
-        GL.Translate(0.0f, -1.25f, 0.0f);
-        CColors.GlColorFromArray(CColors.C_Cherry); // задаємо колір
-        // Call native GLUT teapot via DGLUT wrapper (ensure freeglut.dll is in output folder)
-        teapotRenderer.DrawTeapot(0.7);
+        // Pass whether to extend edges to show vanishing points
+        Draw3DCube(useThreePoint || useThreePointMatrix);
 
 
         // Повернути в нормальний режим, щоб не зламати інший рендеринг
@@ -297,11 +456,11 @@ class MyWindow : GameWindow
     }
 
 
-    void Draw3DCube()
+    void Draw3DCube(bool extendEdges = false)
     {
-        GL.Translate(0.0f, 1f, 0.0f);
         float h = 1.0f; // половина довжини ребра куба
 
+        // Draw colored faces
         GL.Begin(PrimitiveType.Quads); // режим виведення 4-кутників
 
         // Передня грань (червона)
@@ -353,6 +512,53 @@ class MyWindow : GameWindow
         GL.Vertex3(h, -h, -h);
 
         GL.End();
+
+        if (extendEdges)
+        {
+            // Draw extended edges (lines) to show vanishing points
+            GL.Disable(EnableCap.Lighting);
+            GL.LineWidth(2.0f);
+            GL.Color3(0.0f, 0.0f, 0.0f);
+            GL.Begin(PrimitiveType.Lines);
+
+            // Define cube vertices
+            Vector3[] v = new Vector3[8];
+            v[0] = new Vector3(-h, -h, -h);
+            v[1] = new Vector3(h, -h, -h);
+            v[2] = new Vector3(h, h, -h);
+            v[3] = new Vector3(-h, h, -h);
+            v[4] = new Vector3(-h, -h, h);
+            v[5] = new Vector3(h, -h, h);
+            v[6] = new Vector3(h, h, h);
+            v[7] = new Vector3(-h, h, h);
+
+            // Edge list (pairs of vertex indices)
+            int[,] edges = new int[,]
+            {
+                {0,1},{1,2},{2,3},{3,0}, // back face
+                {4,5},{5,6},{6,7},{7,4}, // front face
+                {0,4},{1,5},{2,6},{3,7}  // connections
+            };
+
+            float L = 8.0f; // extension length
+
+            for (int i = 0; i < edges.GetLength(0); i++)
+            {
+                Vector3 a = v[edges[i,0]];
+                Vector3 b = v[edges[i,1]];
+                Vector3 dir = (b - a).Normalized();
+
+                // Draw lines extended in both directions from the cube edge endpoints
+                GL.Vertex3(a - dir * L);
+                GL.Vertex3(a + dir * L);
+
+                GL.Vertex3(b - dir * L);
+                GL.Vertex3(b + dir * L);
+            }
+
+            GL.End();
+            GL.Enable(EnableCap.Lighting);
+        }
     }
 
 
